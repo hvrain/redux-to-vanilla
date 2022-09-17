@@ -1,6 +1,6 @@
 
 import Component from "./core/Component";
-import { store, inputNumber } from "./store";
+import { store, inputNumber, deleteItem } from "./store";
 
 
 export default class App extends Component {
@@ -32,16 +32,13 @@ export default class App extends Component {
   setEvent() {
     console.log('setEvent');
     this.addEvent('keyup', '.inputNumber', ({ key, target }) => {
-      console.log(key);
       if (key !== 'Enter') return;
       store.dispatch(inputNumber({
-        id: Math.max(0, store.getState().items.map(item => Number(item.id)).reduce((p, c) => p > c ? p : c) + 1),
         value: Number(target.value),
       }));
-      console.log(store.getState());
     })
     this.addEvent('click', '.deleteBtn', ({ target }) => {
-      
-    })
+      store.dispatch(deleteItem({id: Number(target.closest('[data-id]').dataset.id)}));
+    })  
   }
 }
