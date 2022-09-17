@@ -4,17 +4,19 @@ export default class Component {
   $target;
   $props;
   $state;
+  $events = new Set();
+  $subcomponents = [];
   
   constructor(target, props) {
     this.$target = target;
     this.$props = props;
     this.setup();
-    this.render();
+    // console.log(this.$target.className, 'setup1');
     this.setEvent();
-    this.mounted();
   }
 
   setup() {
+    // console.log(this.$target.className, 'setup');
     observe(() => {
       this.render();
       this.mounted();
@@ -26,9 +28,19 @@ export default class Component {
   mounted() { }
   addEvent(type, selector, callback) { 
     const isTarget = (target) => target.closest(selector);
-    this.$target.addEventListener(type, event => {
+    let fn = (event) => {
       if (!isTarget(event.target)) return false;
       callback(event);
-    })
+    }
+    this.$target.addEventListener(type, fn);
+    this.$events.add({ type, fn });
+  }
+  removeAllEvent() {
+    this.$events.forEach(({ type, fn }) => this.$target.removeEventListener(type, fn));
+    this.$subcomponents.forEach((subcomponent) =>
+      subcomponent.$events.forEach(({ type, fn }) => {
+        subcomponent.$target.removeEventListener(type, fn)
+      })
+    );
   }
 }

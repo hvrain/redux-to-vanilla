@@ -12,7 +12,6 @@ const debounce = (callback) => {
 
 export const observe = fn => {
   currentObserver = debounce(fn);
-  console.log(fn);
   fn();
   currentObserver = null;
 }
@@ -27,16 +26,12 @@ export const observable = obj => {
         return _value;
       },
       set(value) {
-        console.log('_value', _value);
-        console.log('value', value);
         if (_value === value) return;
         if (JSON.stringify(_value) === JSON.stringify(value)) return;
-        console.log('change');
         _value = value;
         observers.forEach(fn => fn());
       }
     })
-    console.log(observers);
   })
   return obj;
 }

@@ -11,7 +11,6 @@ export const createStore = (reducer) => {
 
   const dispatch = action => {
     const newState = reducer(state, action);
-    console.log(newState);
     for (const [key, value] of Object.entries(newState)) {
       if (!state[key] && state[key] !== 0) continue;
       state[key] = value;
